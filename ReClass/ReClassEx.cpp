@@ -408,9 +408,6 @@ void CReClassExApp::OnButtonReset( )
     g_hProcess = NULL;
     g_ProcessID = 0;
     g_AttachedProcessAddress = NULL;
-    g_ProcessName.Empty();
-
-    CReattachButton::ResetIcon();
 
     CMDIFrameWnd* pFrame = STATIC_DOWNCAST( CMDIFrameWnd, m_pMainWnd );
     CMDIChildWnd* pChildWnd = pFrame->MDIGetActive( );
