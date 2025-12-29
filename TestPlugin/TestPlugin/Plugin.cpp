@@ -111,7 +111,7 @@ PluginStateChange(
 
     if (State)
     {
-        ReClassPrintConsole( L"[WSMem] Enabled!" );
+        LOG( L"[WSMem] Enabled!" );
 
 
 
@@ -121,7 +121,7 @@ PluginStateChange(
     }
     else
     {
-        ReClassPrintConsole( L"[WSMem] Disabled!" );
+        LOG( L"[WSMem] Disabled!" );
 
 		// stop the worker
 		StopWorker();

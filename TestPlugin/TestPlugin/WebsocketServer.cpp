@@ -131,7 +131,7 @@ static int callback_ws(struct lws* wsi,
 
     case LWS_CALLBACK_SERVER_WRITEABLE:
     {
-        LOG(L"WRITEABLE FIRED");
+        //LOGV(L"WRITEABLE FIRED");
         std::shared_ptr<ClientState> state;
 
         {

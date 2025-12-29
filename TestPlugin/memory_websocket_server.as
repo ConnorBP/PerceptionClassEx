@@ -18,7 +18,7 @@ void send_json_response(dictionary &in response)
     return;
     string json, err;
     if (json_stringify(response, json, err)) {
-        log_console("WS: sending response: " + json);
+        //log_console("WS: sending response: " + json);
         g_ws.send_text(json);
     } else {
         log_error("JSON stringify failed: " + err);
@@ -182,7 +182,7 @@ void websocket_pump()
         if (is_text)
         {
             
-            log_console("WS: received text: " + msg);
+            //log_console("WS: received text: " + msg);
             dictionary req;
             string err;
             if (json_parse(msg, req, err))

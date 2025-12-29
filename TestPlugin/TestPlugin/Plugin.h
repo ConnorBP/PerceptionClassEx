@@ -11,7 +11,7 @@
 
 #define LOG(msg, ...) ReClassPrintConsole( L"[WSMem] " msg, __VA_ARGS__);
 
-#define VERBOSE TRUE
+#define VERBOSE FALSE
 #if VERBOSE
 #define LOGV(msg, ...) LOG(msg, __VA_ARGS__)
 #else
