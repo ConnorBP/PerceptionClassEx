@@ -3,6 +3,8 @@
 
 BOOL gTestPluginState = FALSE;
 
+void StartWebSocketServer();
+void StopWebSocketServer();
 
 BOOL 
 PLUGIN_CC 
@@ -10,16 +12,16 @@ PluginInit(
     OUT LPRECLASS_PLUGIN_INFO lpRCInfo 
 )
 {
-    wcscpy_s( lpRCInfo->Name, L"Test Plugin Name" );
-    wcscpy_s( lpRCInfo->Version, L"1.0.0.2" );
-    wcscpy_s( lpRCInfo->About, L"This plugin is a test plugin" );
+    wcscpy_s( lpRCInfo->Name, L"Websocket Memory" );
+    wcscpy_s( lpRCInfo->Version, L"1.0.0.0" );
+    wcscpy_s( lpRCInfo->About, L"Access your memory using websockets" );
     lpRCInfo->DialogId = IDD_SETTINGS_DLG;
 
     if (!ReClassIsReadMemoryOverriden( ) && !ReClassIsWriteMemoryOverriden( ))
     {
         if (ReClassOverrideMemoryOperations( ReadCallback, WriteCallback ) == FALSE)
         {
-            ReClassPrintConsole( L"[TestPlugin] Failed to register read/write callbacks, failing PluginInit" );
+            ReClassPrintConsole( L"[WSMem] Failed to register r/w callbacks, failed Plugin Init" );
             return FALSE;
         }
     }
@@ -43,15 +45,17 @@ PluginStateChange(
 
     if (State)
     {
-        ReClassPrintConsole( L"[TestPlugin] Enabled!" );
+        ReClassPrintConsole( L"[WSMem] Enabled!" );
 
-        //
-        // Nothing for now.
-        //
+		// start the server
+        StartWebSocketServer();
     }
     else
     {
-        ReClassPrintConsole( L"[TestPlugin] Disabled!" );
+        ReClassPrintConsole( L"[WSMem] Disabled!" );
+
+		// stop the server
+        StopWebSocketServer();
 
         //
         // Remove our overrides if we're disabling/disabled.

@@ -9,6 +9,15 @@
 
 #include "ReClassAPI.h"
 
+#define LOG(msg, ...) ReClassPrintConsole( L"[WSMem] " msg, __VA_ARGS__);
+
+#define VERBOSE TRUE
+#if VERBOSE
+#define LOGV(msg, ...) LOG(msg, __VA_ARGS__)
+#else
+#define LOGV(msg, ...)
+#endif
+
 BOOL 
 PLUGIN_CC 
 WriteCallback( 
