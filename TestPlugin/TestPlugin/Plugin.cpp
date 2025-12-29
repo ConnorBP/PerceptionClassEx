@@ -1,10 +1,57 @@
+// Plugin.cpp
+
+#include <windows.h>
+#include <psapi.h>
+#include <string>
+#include <codecvt>
+
 #include "Plugin.h"
+#include "WebSocketServer.hpp"
 #include "resource.h"
+#include "ReadCache.hpp"
 
 BOOL gTestPluginState = FALSE;
 
 void StartWebSocketServer();
 void StopWebSocketServer();
+
+std::wstring GetProcessNameFromPid(DWORD dwProcessId);
+
+HANDLE PLUGIN_CC MyOpenProcess(DWORD, BOOL, DWORD dwProcessId)
+{
+    // For ReClass, any non-null handle is fine as a dummy
+    HANDLE fake = (HANDLE)1;
+
+    std::wstring processNameW = GetProcessNameFromPid(dwProcessId);
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+    std::string processName = conv.to_bytes(processNameW);
+
+    Job job;
+    job.type = JobType::OpenProcess;
+    // you probably want to pass process name from GetProcessNameFromPid here
+    job.processName = processName;
+
+    {
+        std::lock_guard<std::mutex> lock(g_jobs_mutex);
+        g_jobs.push(std::move(job));
+    }
+    g_jobs_cv.notify_one();
+
+    return fake;
+}
+
+BOOL PLUGIN_CC MyCloseProcess(HANDLE)
+{
+    Job job;
+    job.type = JobType::CloseProcess;
+    {
+        std::lock_guard<std::mutex> lock(g_jobs_mutex);
+        g_jobs.push(std::move(job));
+    }
+    g_jobs_cv.notify_one();
+    return TRUE;
+}
+
 
 BOOL 
 PLUGIN_CC 
@@ -25,6 +72,17 @@ PluginInit(
             return FALSE;
         }
     }
+
+    if (!ReClassOverrideOpenProcessOperation(MyOpenProcess)) {
+        return FALSE;
+        // Optionally: ReClassOverrideHandleOperations(MyOpenProcess, MyOpenThread);
+    }
+
+
+    if (!StartWorker()) {
+        return FALSE;
+    }
+
 
     gTestPluginState = TRUE;
 
@@ -53,6 +111,9 @@ PluginStateChange(
     else
     {
         ReClassPrintConsole( L"[WSMem] Disabled!" );
+
+		// stop the worker
+		StopWorker();
 
 		// stop the server
         StopWebSocketServer();
@@ -255,35 +316,103 @@ PluginSettingsDlg(
     return FALSE;
 }
 
-BOOL 
-PLUGIN_CC 
-WriteCallback( 
-    IN LPVOID Address, 
-    IN LPVOID Buffer, 
-    IN SIZE_T Size, 
-    OUT PSIZE_T BytesWritten 
-)
-{
-    DWORD OldProtect;
-    HANDLE ProcessHandle = ReClassGetProcessHandle( );
-    VirtualProtectEx( ProcessHandle, (PVOID)Address, Size, PAGE_EXECUTE_READWRITE, &OldProtect );
-    BOOL Retval = WriteProcessMemory( ProcessHandle, (PVOID)Address, Buffer, Size, BytesWritten );
-    VirtualProtectEx( ProcessHandle, (PVOID)Address, Size, OldProtect, NULL );
-    return Retval;
-}
-
-BOOL 
-PLUGIN_CC 
-ReadCallback( 
+BOOL
+PLUGIN_CC
+ReadCallback(
     IN LPVOID Address,
     IN LPVOID Buffer,
     IN SIZE_T Size,
-    OUT PSIZE_T BytesRead 
+    OUT PSIZE_T BytesRead
 )
 {
-    HANDLE ProcessHandle = ReClassGetProcessHandle( );
-    BOOL Retval = ReadProcessMemory( ProcessHandle, (LPVOID)Address, Buffer, Size, BytesRead );
-    if (!Retval)
-        ZeroMemory( Buffer, Size );
-    return Retval;
+    uintptr_t addr = (uintptr_t)Address;
+
+    // Try cache first
+    {
+        std::lock_guard<std::mutex> lock(g_cache_mutex);
+        ReadKey key{ addr, Size };
+        auto it = g_cache.find(key);
+        if (it != g_cache.end() && it->second.data.size() == Size) {
+            memcpy(Buffer, it->second.data.data(), Size);
+            if (BytesRead) *BytesRead = Size;
+            return TRUE;
+        }
+    }
+
+    // Cache miss: enqueue async read, return zeros immediately
+    {
+        Job job;
+        job.type = JobType::Read;
+        job.address = addr;
+        job.data.resize(Size); // only used for length here
+        {
+            std::lock_guard<std::mutex> lock(g_jobs_mutex);
+            g_jobs.push(std::move(job));
+        }
+        g_jobs_cv.notify_one();
+    }
+
+    ZeroMemory(Buffer, Size);
+    if (BytesRead) *BytesRead = Size; // or 0 if you want to signal "not valid yet"
+    return TRUE;
+}
+
+BOOL
+PLUGIN_CC
+WriteCallback(
+    IN LPVOID Address,
+    IN LPVOID Buffer,
+    IN SIZE_T Size,
+    OUT PSIZE_T BytesWritten
+)
+{
+    uintptr_t addr = (uintptr_t)Address;
+
+    // Update cache optimistically
+    {
+        std::lock_guard<std::mutex> lock(g_cache_mutex);
+        ReadKey key{ addr, Size };
+        CachedBlock block;
+        block.data.assign((uint8_t*)Buffer, (uint8_t*)Buffer + Size);
+        g_cache[key] = std::move(block);
+    }
+
+    // Enqueue async write
+    {
+        Job job;
+        job.type = JobType::Write;
+        job.address = addr;
+        job.data.assign((uint8_t*)Buffer, (uint8_t*)Buffer + Size);
+
+        {
+            std::lock_guard<std::mutex> lock(g_jobs_mutex);
+            g_jobs.push(std::move(job));
+        }
+        g_jobs_cv.notify_one();
+    }
+
+    if (BytesWritten) *BytesWritten = Size;
+    return TRUE;
+}
+
+
+// Helper function to get process name from PID
+std::wstring GetProcessNameFromPid(DWORD dwProcessId)
+{
+    std::wstring processName;
+    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, dwProcessId);
+    if (hProcess)
+    {
+        WCHAR szProcessName[MAX_PATH] = L"<unknown>";
+        if (GetModuleBaseNameW(hProcess, NULL, szProcessName, MAX_PATH))
+        {
+            processName = szProcessName;
+        }
+        CloseHandle(hProcess);
+    }
+    else
+    {
+        processName = L"<unknown>";
+    }
+    return processName;
 }
