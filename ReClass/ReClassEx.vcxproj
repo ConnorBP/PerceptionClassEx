@@ -104,7 +104,7 @@
     <LinkIncremental>false</LinkIncremental>
     <EmbedManifest>true</EmbedManifest>
     <OutDir>..\BIN\</OutDir>
-    <TargetName>$(ProjectName)64</TargetName>
+    <TargetName>nothingtoseehere64</TargetName>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules />
     <CodeAnalysisRuleAssemblies />
@@ -118,7 +118,11 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules />
     <CodeAnalysisRuleAssemblies />
-    <TargetName>$(ProjectName)64_dbg</TargetName>
+    <TargetName>nothingtoseehere64_dbg</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+    <VcpkgHostTriplet>x64-windows-static</VcpkgHostTriplet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -205,30 +209,38 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_AMD64_;_M_AMD64;_X86AMD64_;_WIN64;_M_X64;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(VSInstallDir)DIA SDK\include;$(SolutionDir)scintilla\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zc:threadSafeInit- /GR- /D_HAS_STATIC_RTTI=0 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp14</LanguageStandard>
+      <BasicRuntimeChecks />
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <UACExecutionLevel>HighestAvailable</UACExecutionLevel>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/ignore:4099 /pdbaltpath:pdb.pdb /nocoffgrpinfo %(AdditionalOptions)</AdditionalOptions>
       <AdditionalManifestDependencies>"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'";%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <AdditionalLibraryDirectories>..\DIA SDK\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>BeaEngine_s_stdcall_64.lib;SciLexer_64.lib;Psapi.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>false</DataExecutionPrevention>
+      <CETCompat>true</CETCompat>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>

@@ -104,6 +104,7 @@
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <VcpkgUseStatic>true</VcpkgUseStatic>
+    <VcpkgHostTriplet>x64-windows-static</VcpkgHostTriplet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -168,6 +169,8 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;PLUGIN_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <BasicRuntimeChecks />
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -177,6 +180,8 @@
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
       <ProgramDatabaseFile>$(OutDir)$(TargetName)64.pdb</ProgramDatabaseFile>
       <AdditionalLibraryDirectories>../../BIN;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>false</DataExecutionPrevention>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

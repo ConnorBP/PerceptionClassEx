@@ -789,10 +789,10 @@ void CReClassExApp::SaveXML( TCHAR* FileName )
     XMLDeclaration* decl = XmlDoc.NewDeclaration(/*"xml version = \"1.0\" encoding=\"UTF-8\""*/ );
     XmlDoc.LinkEndChild( decl );
 
-    XMLElement* root = XmlDoc.NewElement( "ReClass" );
+    XMLElement* root = XmlDoc.NewElement( "Nothin" );
     XmlDoc.LinkEndChild( root );
 
-    XMLComment* comment = XmlDoc.NewComment( "ReClassEx" );
+    XMLComment* comment = XmlDoc.NewComment( "NothinToSee" );
     root->LinkEndChild( comment );
     //---------------------------------------------
     XMLElement* settings = XmlDoc.NewElement( "TypeDef" );
@@ -1015,7 +1015,7 @@ void CReClassExApp::SaveXML( TCHAR* FileName )
         return;
     }
 
-    PrintOut( _T( "ReClass files saved successfully to \"%s\"" ), FileName ); 
+    PrintOut( _T( "NothinToSee files saved successfully to \"%s\"" ), FileName ); 
 }
 
 void CReClassExApp::OnFileSave( )
@@ -1032,7 +1032,7 @@ void CReClassExApp::OnFileSave( )
 
 void CReClassExApp::OnFileSaveAs( )
 {
-    TCHAR Filters[] = _T( "ReClass (*.reclass)|*.reclass|All Files (*.*)|*.*||" );
+    TCHAR Filters[] = _T( "NothinToSee (*.nts)|*.nts|All Files (*.*)|*.*||" );
     CFileDialog fileDlg( FALSE, _T( "reclass" ), _T( "" ), OFN_HIDEREADONLY, Filters, NULL );
     if (fileDlg.DoModal( ) != IDOK)
         return;
@@ -1044,9 +1044,9 @@ void CReClassExApp::OnFileSaveAs( )
 
 void CReClassExApp::OnFileOpen( )
 {
-    TCHAR Filters[] = _T( "ReClass (*.reclass)|*.reclass|All Files (*.*)|*.*||" );
+    TCHAR Filters[] = _T( "NothinToSee (*.nts)|*.nts|All Files (*.*)|*.*||" );
     
-    CFileDialog fileDlg( TRUE, _T( "reclass" ), _T( "" ), OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, Filters );
+    CFileDialog fileDlg( TRUE, _T( "nts" ), _T( "" ), OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, Filters );
     if (fileDlg.DoModal( ) != IDOK)
         return;
 
@@ -1102,7 +1102,7 @@ void CReClassExApp::OnFileOpen( )
 
     const char* v = XmlCurrentElement->Value( );
 
-    if (_stricmp( v, "ReClass" ) != 0) // The root element value is 'ReClass'
+    if (_stricmp( v, "Nothin" ) != 0) // The root element value is 'Nothin'
         return; // Not a Reclass file
 
     hRoot = XMLHandle( XmlCurrentElement );
@@ -1630,7 +1630,7 @@ void CReClassExApp::OnButtonGenerate( )
 
         ::CloseClipboard( );
         
-        GetMainWnd( )->MessageBox( _T( "Copied generated code to clipboard" ), _T( "ReClassEx" ), MB_OK | MB_ICONINFORMATION );
+        GetMainWnd( )->MessageBox( _T( "Copied generated code to clipboard" ), _T( "NothinToSee" ), MB_OK | MB_ICONINFORMATION );
     }
     else
     {

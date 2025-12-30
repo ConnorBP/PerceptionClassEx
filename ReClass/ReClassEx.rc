@@ -576,11 +576,11 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "About"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    LTEXT           "ReClassEx",IDC_STATIC,13,54,117,8
-    CTEXT           "This is a complete port of ReClass to x64, which contains new features. ReClass was originally written by DrUnKeN ChEeTaH, then later developed by P47R!CK and DogMatt.",IDC_STATIC,9,86,256,27
+    LTEXT           "NothinToSee",IDC_STATIC,13,54,117,8
+    CTEXT           "Ths be a special port of Nothin to x64, which hast new features. Nothin was originally written by *check github*.",IDC_STATIC,9,86,256,27
     LTEXT           "Version: x.x.x.x",IDC_ABOUT_BUILD_VERSION,13,63,127,8
     LTEXT           "Build Date: xx:xx:xxxx",IDC_ABOUT_BUILD_DATE,13,73,125,8
-    CTEXT           "Thanks to all the authors who contributed to ReClass:",IDC_STATIC,9,112,256,8
+    CTEXT           "Thanks all u authors who contributed to nothin at all:",IDC_STATIC,9,112,256,8
     CTEXT           "Authors here",IDC_ABOUT_AUTHORS,9,123,256,25
     CONTROL         IDB_BITMAP_ABOUT,IDC_STATIC_IMAGE_ABOUT,"Static",SS_BITMAP | SS_REALSIZEIMAGE,9,0,256,44
     EDITTEXT        IDC_ABOUT_LICENSE,9,153,256,43,ES_MULTILINE | ES_READONLY | WS_VSCROLL | NOT WS_TABSTOP

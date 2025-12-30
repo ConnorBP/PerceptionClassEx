@@ -137,7 +137,7 @@ int CMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
     }
     else
     {
-        SetTitle( _T( "ReClassEx" ) );
+        SetTitle( _T( "NothinToSee" ) );
     }
 
     //
@@ -334,7 +334,7 @@ void CMainFrame::OnCheckRandomWindowName( )
     } 
     else 
     {
-        SetTitle( _T( "ReClassEx" ) );
+        SetTitle( _T( "NothinToSee" ) );
     }
 
     //

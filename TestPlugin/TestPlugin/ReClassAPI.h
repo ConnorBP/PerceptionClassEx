@@ -5,15 +5,15 @@
 
 #ifdef _WIN64
 #ifdef _DEBUG
-#pragma comment(lib, "ReClassEx64_dbg.lib")
+#pragma comment(lib, "nothingtoseehere64_dbg.lib")
 #else
-#pragma comment(lib, "ReClassEx64.lib")
+#pragma comment(lib, "nothingtoseehere64.lib")
 #endif
 #else
 #ifdef _DEBUG
-#pragma comment(lib, "ReClassEx_dbg.lib")
+#pragma comment(lib, "nothingtoseehere_dbg.lib")
 #else
-#pragma comment(lib, "ReClassEx.lib")
+#pragma comment(lib, "nothingtoseehere.lib")
 #endif
 #endif
 
