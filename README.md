@@ -2,7 +2,7 @@
 
 ![PerceptClassEx](./img/screenshot.png "PerceptClassEx")
 
-    Connect to any process memory using the perception.cx scripting api for stealth. Very handy for reverse engineering things that do not want to be seen. IPC Achieved using websockets. The reclass plugin in this repository acts as a websocket server, and the provided script connects to it to provide process memory access.
+> Connect to any process memory using the perception.cx scripting api for stealth. Very handy for reverse engineering things that do not want to be seen. IPC Achieved using websockets. The reclass plugin in this repository acts as a websocket server, and the provided script connects to it to provide process memory access.
 
 ## Build Requirements
 
@@ -12,7 +12,7 @@
 
 # Forked From these repositories:
 
-    Below is the readme from the original repositories
+> Below is the readme from the original repositories
 
 ## ReClassDark
 
